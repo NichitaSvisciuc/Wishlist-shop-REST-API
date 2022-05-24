@@ -6,4 +6,5 @@
     2. pip install djangorestframework
     3. pip install psycopg2
 5. copiati comanda : python manage.py migrate -> pentru efectuarea migratiilor
-5. copiati comanda : python manage.py runserver
+6. copiati comanda : python manage.py runserver
+7. intrati pe admin login cu adress : 127.0.0.1:8000/admin si intrati cu datele : username : admin, parola : admin pentru a nu primi erori cu wishlisturile ce sunt legate de useri
