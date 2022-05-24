@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Ecomerce | Shop</title>
+
+	<!-- CSS only -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body>
+
+	<style type="text/css">
+		
+		body {
+			background: rgb(2,0,36);
+			background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,121,93,1) 0%, rgba(0,212,255,1) 100%);
+		}
+
+		.list-group {
+			width: 800px;
+			margin-top: 200px;
+		}
+
+		.search {
+		    background-color: #fff;
+		    padding: 4px;
+		}
+
+		::placeholder {
+		    color: gray;
+		    opacity: 0.8;
+		}
+
+		.search-1 {
+		    position: relative;
+		    width: 100%
+		}
+
+		.search-1 input {
+		    height: 45px;
+		    border: none;
+		    width: 100%;
+		    padding-left: 18px;
+		    padding-right: 100px;
+		}
+
+		.search-1 input:focus {
+		    border-color: none;
+		    box-shadow: none;
+		    outline: none
+		}
+
+		.search-1 i {
+		    position: absolute;
+		    top: 12px;
+		    left: -10px;
+		    font-size: 24px;
+		    color: #eee
+		}
+
+		.search-1 button {
+		    position: absolute;
+		    margin-left: 483px;
+		    border: none;
+		    height: 45px;
+		    background-color: red;
+		    color: #fff;
+		    width: 90px;
+		}
+
+		@media (max-width:800px) {
+
+		    .search-1 i {
+		        left: 4px
+		    }
+
+		    .search-1 input {
+		        padding-left: 34px
+		    }
+
+		    .search-1 button {
+		        height: 37px;
+		        top: 5px;
+		    }
+		}
+
+	</style>
+
+	<div class="list-group container">
+		<div class="container"> 
+			<div id="list-wrapper">
+				<!-- Aici vor fi itemele din API request -->
+			</div>
+		</div>
+
+</body>
+
+<!-- 	<script type="text/javascript">
+
+		// Ajaxul care v-a face requesturi catre API
+
+		buildList()
+
+		// Functia data face request catre Api si primeste toate itemele din baza de date care vor fi aratate in HTML
+		
+		function buildList(){
+			var wrapper = document.getElementById('list-wrapper')
+
+			var url = 'http://127.0.0.1:8000/api/display-wishlists/'
+
+			fetch(url)
+			.then((resp) => resp.json())
+			.then(function(data){
+				console.log('Data:', data)
+
+				var list = data
+				for (var i in list){
+
+					var item = `
+						<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+						    <div class="d-flex w-100 justify-content-between">
+						      <h5 class="mb-1">${list[i].name}</h5>
+						      <small>${list[i].price} $</small>
+						    </div>
+						    <p class="mb-1">${list[i].description}</p>
+						    <small>Donec id elit non mi porta.</small>
+					 	</a>
+					`
+					wrapper.innerHTML += item
+	
+				}
+			})
+		}
+
+	</script> -->
+
+	<!-- JavaScript Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+</html>

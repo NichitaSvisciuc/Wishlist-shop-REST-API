@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Ecomerce | Shop</title>
+
+	<!-- CSS only -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body>
+
+	<style type="text/css">
+		
+		body {
+			background: rgb(2,0,36);
+			background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,121,93,1) 0%, rgba(0,212,255,1) 100%);
+		}
+
+		.list-group {
+			width: 800px;
+			margin-top: 200px;
+		}
+
+		.customModal {
+            display: block; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* customModal Content */
+        .customModal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .customModal {
+            display: flex; 
+            position: fixed; 
+            z-index: 1;
+            align-items: center;
+            justify-content: center;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%; 
+            overflow: auto; 
+        }
+            
+        .customModal__content {
+            background-color: #fefefe;
+            padding: 12px;
+            min-width: 200px;
+            min-height: 200px;
+            border-radius: 8px;    
+                z-index: 9999;
+        }
+
+        .custom__modal-overlay {
+            display: block; 
+            position: absolute; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+        }
+
+	</style>
+
+	<div class="list-group container">
+		<div class="container"> 
+			<div class="flex-row">
+				<a class="btn btn" style="background: #f04343; color: white;" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Creeaza un wishlist</a>
+				<a href="{% url 'index' %}" class="btn btn" style="background: #f04343; color: white;">Intoarcete acasa</a>
+			</div> <br><br>
+			<div id="list-wrapper">
+				<!-- Aici vor fi itemele din API request -->
+			</div>
+		</div>
+
+	<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+	  <div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+		    <form method="POST" id="form-wrapper">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalToggleLabel">Crearea unui wishlist</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+		        <input class="form-control" type="text" name="name" id="wishlist_name" placeholder="Numele wishlistului">
+		        <input type="hidden" name="user" id="user" value="{{ request.user.id }}">
+		      </div>
+		      <div class="modal-footer">
+		        <button class="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: #f04343; color: white; border: 0;">Cancel</button>
+		        <button type="submit" class="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: #f04343; color: white; border: 0;">Submit</button>
+		      </div>
+		    </form>
+	    </div>
+	  </div>
+	</div>
+	<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+	  <div class="modal-dialog modal-dialog-centered">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalToggleLabel2">Modal 2</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	        Hide this modal and show the first with the button below.
+	      </div>
+	      <div class="modal-footer">
+	        <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Back to first</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</body>
+
+<script type="text/javascript">
+
+		// Ajaxul care v-a face requesturi catre API
+
+		buildList()
+
+		// Functia care creeaza un csrf_token pentru a fi capabili sa facem submit la forma ce creeaza wishlisturi(care are metoda POST)
+
+		const getCookie = (name) => {
+		    let cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+		        let cookies = document.cookie.split(';');
+		        for (let i = 0; i < cookies.length; i++) {
+		            let cookie = cookies[i].trim();
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+
+		let csrftoken = getCookie('csrftoken');
+
+		//creare modal
+
+
+		// Functia data face request catre Api si primeste toate itemele din baza de date care vor fi aratate in HTML
+
+
+
+		//------------------------------
+		async function buildList(){
+			const wrapper = document.getElementById('list-wrapper')
+			wrapper.innerHTML = ''
+			const response = await fetch('http://127.0.0.1:8000/api/display-wishlists/')
+			const data = await response.json()
+
+			if(data.length == 0)  {
+				wrapper.innerHTML += `
+					<div class="list-group-item list-group-item-action flex-column align-items-start">
+						<div class="d-flex w-100 justify-content-between">
+		 				    <h5 class="mb-1"> Inca nu aveti nici un wishlist </h5>
+		 				</div>
+		 			</div>
+				`
+			} else {
+				data.forEach(element => {
+					wrapper.innerHTML += `
+		 					<a href="#" class="list-group-item list-group-item-action flex-column align-items-start"  >
+		 					    <div class="d-flex w-100 justify-content-between">
+		 					      <h5 class="mb-1 w-100" data-modal="${element.id}">${element.name}</h5>
+		 					      <small onclick="deleteWishlist(${element.id})">Delete</small>
+		 					    </div>
+		 					    <small></small>
+		 				 	</a>
+							  `
+				let openModal = document.querySelectorAll('[data-modal]')
+				openModal.forEach(element => {
+					element.addEventListener('click', function(e) {
+						removeModals();
+						e.preventDefault()
+						buildModal(element.dataset.modal)
+					})
+				})
+			});
+			}
+
+			function removeModals() {
+				let modals = document.querySelectorAll('.customModal')
+				modals.forEach(element => {
+					element.remove()
+				})
+			}
+			async function buildModal(el) {
+				let modal = document.createElement('div')
+	            modal.className = 'customModal'
+	            modal.id = 'exampleModalToggle'
+	            modal.setAttribute('aria-hidden', 'true')
+	            modal.setAttribute('aria-labelledby', 'exampleModalToggleLabel')
+	            modal.setAttribute('tabindex', '-1')
+	            modal.setAttribute('data-modal-id',el)
+
+				fetch(`http://127.0.0.1:8000/api/wishlist-order-items/${el}`).then((resp) => resp.json()).then(function(data){
+
+					modal.innerHTML = `
+			            <div class="custom__modal-overlay" onclick="removeModals()"></div>
+			            <div class="customModal__content" id="modal_items">
+			            
+			            </div>
+			        `
+
+					if (data.length == 0){
+						modal.innerHTML = `
+				            <div class="custom__modal-overlay" onclick="removeModals()"></div>
+				            <div class="customModal__content">
+				            	Inca nu aveti nici un item in wishlistul dat
+				            </div>
+			        	`
+			        				document.querySelector('.custom__modal-overlay').addEventListener('click',()=> {
+					                removeModals()
+					            })
+					} else {
+
+					var list = data
+					var modal_items = document.getElementById('modal_items')
+
+						for (let i in list){
+
+							modal_items.innerHTML = ' '
+
+							fetch(`http://127.0.0.1:8000/api/wishlist-items/${list[i].item}`).then((resp) => resp.json()).then(function(data_item){
+									console.log(data_item)
+									modal_items.innerHTML += `
+							            <p>Name : ${data_item.name}</p>
+							            <p>Quantity : ${list[i].quantity}</p>
+								        <button class="btn btn-danger" onclick="window.location.href='http://127.0.0.1:8000/remove-item-from-wishlist/${list[i].item}/${el}'">Remove</button>
+							        `
+
+					        		document.querySelector('.custom__modal-overlay').addEventListener('click',()=> {
+					                removeModals()
+					            })
+							})
+						}
+					}
+				})
+				document.body.appendChild(modal)
+			}
+		}
+
+		//--------------------------------------------------
+		document.getElementById('form-wrapper').addEventListener('submit', function(e){
+			e.preventDefault()
+			const form = document.getElementById('form-wrapper')
+			const formData = new FormData(form)
+			const data = {}
+			formData.forEach((value, key) => {
+				data[key] = value
+			})
+
+			const name = document.getElementById('wishlist_name').value
+            const user = document.getElementById('user').value
+			const url = 'http://127.0.0.1:8000/api/create-wishlists/';
+			const options = {
+				method: 'POST',
+				body: JSON.stringify(data),
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': csrftoken
+				},
+				body:JSON.stringify(
+                    {
+                        "id": 1,
+                        "name": String(name),
+                        "user": Number(user),
+                    }
+                )
+			}
+			fetch(url, options).then(function(response){
+                buildList()
+                document.getElementById('form-wrapper').reset()
+            })
+		})
+
+		function deleteWishlist(wishlist_id){
+
+			fetch(`http://127.0.0.1:8000/api/delete-wishlist/${wishlist_id}`, {
+				method:'DELETE', 
+				headers:{
+					'Content-type' : 'application/json',
+					'X-CSRFToken' : csrftoken,
+				}
+			}).then((response) => {
+				buildList()
+			})
+		}
+
+	</script>
+
+	<!-- JavaScript Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+</html>
