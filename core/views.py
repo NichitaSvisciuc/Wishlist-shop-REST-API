@@ -36,6 +36,9 @@ def addItemtoWishlist(request, item_id, wishlists_pk):
 	wishlist = WishList.objects.get(id = wishlists_pk)
 
 	if created:
+		item.numarul_de_utilizatori_ce_au_adaugat_produsul += 1
+		item.save()		
+
 		wishlist.items.add(order_item)
 
 		return redirect(request.META['HTTP_REFERER'])
